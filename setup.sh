@@ -37,15 +37,33 @@ systemctl enable mysql
 
 # Configure MySQL
 echo "Configuring MySQL..."
-# For MySQL 8.0, we need to handle auth_socket authentication first
-# Set root password to "password" and ensure mysql_native_password authentication
-sudo mysql <<EOF
+echo "Attempting to reset MySQL root password..."
+
+# Stop MySQL service for password reset
+systemctl stop mysql
+
+# Start MySQL in safe mode without authentication
+sudo mkdir -p /var/run/mysqld
+sudo chown mysql:mysql /var/run/mysqld
+sudo mysqld_safe --skip-grant-tables --skip-networking &
+sleep 5
+
+# Reset root password and create users
+mysql -u root <<EOF
+FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 CREATE USER IF NOT EXISTS 'coinbase_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'coinbase_user'@'localhost' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
+
+# Kill the safe mode MySQL and restart normally
+sudo pkill -9 mysqld
+sleep 3
+systemctl start mysql
+
+echo "MySQL root password has been set to: password"
 
 # Create database and table
 echo "Creating database and table..."
