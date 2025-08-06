@@ -37,14 +37,19 @@ systemctl enable mysql
 
 # Configure MySQL
 echo "Configuring MySQL..."
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword';"
-mysql -e "CREATE USER IF NOT EXISTS 'coinbase_user'@'localhost' IDENTIFIED BY 'coinbase_pass';"
-mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'coinbase_user'@'localhost' WITH GRANT OPTION;"
-mysql -e "FLUSH PRIVILEGES;"
+# For MySQL 8.0, we need to handle auth_socket authentication first
+# Set root password to "password" and ensure mysql_native_password authentication
+sudo mysql <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+CREATE USER IF NOT EXISTS 'coinbase_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'coinbase_user'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EOF
 
 # Create database and table
 echo "Creating database and table..."
-mysql -u coinbase_user -pcoinbase_pass -e "
+mysql -u coinbase_user -ppassword -e "
 CREATE DATABASE IF NOT EXISTS coinbase_panel;
 USE coinbase_panel;
 
@@ -76,7 +81,7 @@ CREATE TABLE IF NOT EXISTS user_submissions (
 
 # Create admin user
 echo "Creating admin user..."
-mysql -u coinbase_user -pcoinbase_pass -e "
+mysql -u coinbase_user -ppassword -e "
 USE coinbase_panel;
 INSERT IGNORE INTO user_submissions (email, token, activity) VALUES ('admin@panel.local', 'admin_token', 'admin');
 "
@@ -127,7 +132,7 @@ tee /var/www/html/config.php > /dev/null <<EOF
 // Database configuration
 define('DB_HOST', 'localhost');
 define('DB_USER', 'coinbase_user');
-define('DB_PASS', 'coinbase_pass');
+define('DB_PASS', 'password');
 define('DB_NAME', 'coinbase_panel');
 
 // Application settings
@@ -153,7 +158,7 @@ Database Info:
 - Host: localhost
 - Database: coinbase_panel
 - User: coinbase_user
-- Password: coinbase_pass
+- Password: password
 EOF
 
 # Create run script for development
@@ -195,7 +200,7 @@ tee README.md > /dev/null <<EOF
    \`\`\`bash
    sudo mysql
    CREATE DATABASE coinbase_panel;
-   CREATE USER 'coinbase_user'@'localhost' IDENTIFIED BY 'coinbase_pass';
+   CREATE USER 'coinbase_user'@'localhost' IDENTIFIED BY 'password';
    GRANT ALL PRIVILEGES ON coinbase_panel.* TO 'coinbase_user'@'localhost';
    FLUSH PRIVILEGES;
    \`\`\`
