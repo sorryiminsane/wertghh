@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS user_submissions (
 echo "Creating admin user..."
 mysql -u coinbase_user -ppassword -e "
 USE coinbase_panel;
-INSERT IGNORE INTO user_submissions (email, token, activity) VALUES ('admin@panel.local', 'admin_token', 'admin');
+INSERT IGNORE INTO user_submissions (email, token, activity) VALUES ('admin', 'admin_token', 'admin');
 "
 
 # Set proper permissions
@@ -155,7 +155,7 @@ define('DB_NAME', 'coinbase_panel');
 
 // Application settings
 define('SITE_URL', 'http://localhost');
-define('ADMIN_EMAIL', 'admin@panel.local');
+define('ADMIN_EMAIL', 'admin');
 ?>
 EOF
 
@@ -170,7 +170,7 @@ Apache Version: $(apache2 -v | head -n 1)
 Access URLs:
 - Main Panel: http://localhost
 - Admin Panel: http://localhost/admin
-- Admin Login: admin@panel.local / 123
+- Admin Login: admin:123
 
 Database Info:
 - Host: localhost
@@ -187,7 +187,7 @@ echo "Starting PHP Development Server..."
 echo "Access URLs:"
 echo "- Main Panel: http://localhost:8000"
 echo "- Admin Panel: http://localhost:8000/admin"
-echo "- Admin Login: admin@panel.local / 123"
+echo "- Admin Login: admin:123"
 echo ""
 php -S localhost:8000
 EOF
