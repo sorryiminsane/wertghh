@@ -1,6 +1,15 @@
 <?php
-// Start the session
-session_start();
+// Start the session with secure settings
+session_start([
+    'cookie_lifetime' => 0, // Session expires when browser closes
+    'cookie_secure' => true,    // Only send cookie over HTTPS
+    'cookie_httponly' => true, // Prevent JavaScript access to session cookie
+    'cookie_samesite' => 'Lax', // CSRF protection
+    'use_strict_mode' => true,  // Prevents session fixation
+    'use_only_cookies' => 1,    // Only use cookies for session
+    'sid_length' => 128,        // Strong session ID length
+    'sid_bits_per_character' => 6 // More entropy
+]);
 
 // Include the database connection file
 require_once "admin/db_connection.php";

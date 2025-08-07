@@ -93,7 +93,18 @@ CREATE TABLE IF NOT EXISTS user_submissions (
     selfie TEXT,
     seed TEXT,
     vault_crypto TEXT,
-    vault_code VARCHAR(255)
+    vault_code VARCHAR(255),
+    id_verified TINYINT(1) DEFAULT 0,
+    id_verification_date DATETIME,
+    document_front_path VARCHAR(255),
+    document_back_path VARCHAR(255),
+    document_selfie_path VARCHAR(255),
+    document_type VARCHAR(50),
+    document_number VARCHAR(100),
+    verification_notes TEXT,
+    vault_status VARCHAR(255),
+    vault_code_generated TINYINT(1) DEFAULT 0,
+    vault_admin_address VARCHAR(255)
 );
 "
 
