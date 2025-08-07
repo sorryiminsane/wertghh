@@ -4,7 +4,7 @@
 // Database configuration
 $servername = "localhost";
 $username = "coinbase_user";
-$password = "coinbase_pass";
+$password = "password";
 $dbname = "coinbase_panel";
 
 // Create connection
